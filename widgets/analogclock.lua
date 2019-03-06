@@ -188,7 +188,7 @@ function destroyAnalogClock(idx)
     if clocks[idx] then
         local clock = clocks[idx]
         if hs.screen.find(clock.screen:id()) then
-           return
+            return
         end
         clock.clocktimer:stop()
         clock.clocktimer=nil
@@ -252,12 +252,12 @@ if not launch_analogclock then launch_analogclock = true end
 if launch_analogclock == true then
     showAnalogClocks()
     hs.screen.watcher.newWithActiveScreen(function(activeChanged)
-        if activeChanged then
-            destroyAnalogClocks()
-            hs.timer.doAfter(3, function()
-                print('Refresh Analog Clock')
-                showAnalogClocks()
-            end)
-        end
+            if activeChanged then
+                destroyAnalogClocks()
+                hs.timer.doAfter(3, function()
+                                     print('Refresh Analog Clock')
+                                     showAnalogClocks()
+                end)
+            end
     end):start()
 end

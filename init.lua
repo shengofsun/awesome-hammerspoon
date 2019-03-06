@@ -36,106 +36,17 @@ end
 
 hsreload_keys = hsreload_keys or {mod0, "R"}
 if string.len(hsreload_keys[2]) > 0 then
-    hs.hotkey.bind(hsreload_keys[1], hsreload_keys[2], "Reload Configuration", function() hs.reload() end)
-end
-
-if modalmgr == nil then
-    showtime_lkeys = showtime_lkeys or {mod0, "T"}
-    if string.len(showtime_lkeys[2]) > 0 then
-        hs.hotkey.bind(showtime_lkeys[1], showtime_lkeys[2], 'Show Digital Clock', function() show_time() end)
-    end
-
-    show_screen_numbers_lkeys = show_screen_numbers_lkeys or {mod0, "Q"}
-    if string.len(show_screen_numbers_lkeys[2]) > 0 then
-        hs.hotkey.bind(show_screen_numbers_lkeys[1], show_screen_numbers_lkeys[2], 'Show Screen Numbers', function() show_screen_numbers() end)
-    end
+    hs.hotkey.bind(hsreload_keys[1],
+                   hsreload_keys[2], "Reload Configuration",
+                   function() hs.reload() end)
 end
 
 showhotkey_keys = showhotkey_keys or {mod0, "space"}
 if string.len(showhotkey_keys[2]) > 0 then
-    hs.hotkey.bind(showhotkey_keys[1], showhotkey_keys[2], "Toggle Hotkeys Cheatsheet", function() showavailableHotkey() end)
-end
-
-times = {}
-
-function destroy_time(idx)
-    local time = times[idx]
-    if time then
-        if time.draw then
-            time.draw:delete()
-            time.draw = nil
-        end
-        times[idx] = nil
-    end
-end
-
-function show_time()
-    for i=1,#hs.screen.allScreens() do
-        local screen = hs.screen.allScreens()[i]
-        if not times[screen:id()] then
-            local time = {}
-            times[screen:id()] = time
-            local mainRes = screen:fullFrame()
-            local localMainRes = screen:absoluteToLocal(mainRes)
-            local time_str = hs.styledtext.new(os.date("%H:%M"),{font={name="Impact",size=120},color=darkblue,paragraphStyle={alignment="center"}})
-            local timeframe = hs.geometry.rect(screen:localToAbsolute((localMainRes.w-300)/2,(localMainRes.h-200)/2,300,150))
-            time.draw = hs.drawing.text(timeframe,time_str)
-            time.draw:setLevel(hs.drawing.windowLevels.overlay)
-            time.draw:show()
-            if time.ttimer == nil then
-                time.ttimer = hs.timer.doAfter(1, function() destroy_time(screen:id()) end)
-            else
-                time.ttimer:start()
-            end
-        else
-            local time = times[screen:id()]
-            if time.ttimer then
-                time.ttimer:stop()
-            end
-            destroy_time(screen:id())
-        end
-    end
-end
-
-screen_numbers = {}
-
-function destroy_screen_number(idx)
-    local screen_number = screen_numbers[idx]
-    if screen_number then
-        if screen_number.draw then
-            screen_number.draw:delete()
-            screen_number.draw = nil
-        end
-        screen_numbers[idx] = nil
-    end
-end
-
-function show_screen_numbers()
-    for i=1,#hs.screen.allScreens() do
-        local screen = hs.screen.allScreens()[i]
-        if not screen_numbers[screen:id()] then
-            screen_number = {}
-            screen_numbers[screen:id()] = screen_number
-            local mainRes = screen:fullFrame()
-            local localMainRes = screen:absoluteToLocal(mainRes)
-            local number_str = hs.styledtext.new(i,{font={name="Impact",size=160},color=lawngreen,paragraphStyle={alignment="center"}})
-            local numberframe = hs.geometry.rect(screen:localToAbsolute((localMainRes.w-300)/2,(localMainRes.h-240)/2,300,200))
-            screen_number.draw = hs.drawing.text(numberframe,number_str)
-            screen_number.draw:setLevel(hs.drawing.windowLevels.overlay)
-            screen_number.draw:show()
-            if screen_number.ttimer == nil then
-                screen_number.ttimer = hs.timer.doAfter(1, function() destroy_screen_number(screen:id()) end)
-            else
-                screen_number.ttimer:start()
-            end
-        else
-            screen_number = screen_numbers[screen:id()]
-            if screen_number.ttimer then
-                screen_number.ttimer:stop()
-            end
-            destroy_screen_number(screen:id())
-        end
-    end
+    hs.hotkey.bind(showhotkey_keys[1],
+                   showhotkey_keys[2],
+                   "Toggle Hotkeys Cheatsheet",
+                   function() showavailableHotkey() end)
 end
 
 function showavailableHotkey()
@@ -146,23 +57,43 @@ function showavailableHotkey()
         local localMainRes = mainScreen:absoluteToLocal(mainRes)
         local width = math.min(864, localMainRes.w * 3 / 5)
         local height = math.min(540, localMainRes.h * 3 / 5)
-        local hkbgrect = hs.geometry.rect(mainScreen:localToAbsolute((localMainRes.w-width)/2,(localMainRes.h-height)/2,width,height))
+        local hkbgrect = hs.geometry.rect(mainScreen:localToAbsolute(
+                                              (localMainRes.w-width)/2,
+                                              (localMainRes.h-height)/2,
+                                              width,
+                                              height))
         hotkeybg = hs.drawing.rectangle(hkbgrect)
         -- hotkeybg:setStroke(false)
         if not hotkey_tips_bg then hotkey_tips_bg = "light" end
         if hotkey_tips_bg == "light" then
-            hotkeybg:setFillColor({red=238/255,blue=238/255,green=238/255,alpha=0.95})
+            hotkeybg:setFillColor({red=238/255,
+                                   blue=238/255,
+                                   green=238/255,
+                                   alpha=0.95})
         elseif hotkey_tips_bg == "dark" then
-            hotkeybg:setFillColor({red=0,blue=0,green=0,alpha=0.95})
+            hotkeybg:setFillColor({red=0,
+                                   blue=0,
+                                   green=0,
+                                   alpha=0.95})
         end
         hotkeybg:setRoundedRectRadii(10,10)
         hotkeybg:setLevel(hs.drawing.windowLevels.modalPanel)
         hotkeybg:behavior(hs.drawing.windowBehaviors.stationary)
-        local hktextrect = hs.geometry.rect(hkbgrect.x+40,hkbgrect.y+30,hkbgrect.w-80,hkbgrect.h-60)
+        local hktextrect = hs.geometry.rect(hkbgrect.x+40,
+                                            hkbgrect.y+30,
+                                            hkbgrect.w-80,
+                                            hkbgrect.h-60)
         hotkeytext = hs.drawing.text(hktextrect,"")
         hotkeytext:setLevel(hs.drawing.windowLevels.modalPanel)
         hotkeytext:behavior(hs.drawing.windowBehaviors.stationary)
-        hotkeytext:setClickCallback(nil,function() hotkeytext:delete() hotkeytext=nil hotkeybg:delete() hotkeybg=nil end)
+        hotkeytext:setClickCallback(nil,
+                                    function()
+                                        hotkeytext:delete()
+                                        hotkeytext=nil
+                                        hotkeybg:delete()
+                                        hotkeybg=nil
+        end)
+
         hotkey_filtered = {}
         for i=1,#hotkey_list do
             if hotkey_list[i].idx ~= hotkey_list[i].msg then
@@ -175,13 +106,30 @@ function showavailableHotkey()
             local tmpstr = hotkey_filtered[i-1].msg .. hotkey_filtered[i].msg
             if string.len(tmpstr)<= availablelen then
                 local tofilllen = availablelen-string.len(hotkey_filtered[i-1].msg)
-                hkstr = hkstr .. string.format('%-80s', hotkey_filtered[i-1].msg) .. string.format('%'..tofilllen..'s',hotkey_filtered[i].msg) .. '\n'
+                hkstr = hkstr ..
+                    string.format('%-80s', hotkey_filtered[i-1].msg) ..
+                    string.format('%'..tofilllen..'s',hotkey_filtered[i].msg) ..
+                    '\n'
             else
-                hkstr = hkstr .. hotkey_filtered[i-1].msg .. '\n' .. hotkey_filtered[i].msg .. '\n'
+                hkstr = hkstr ..
+                    hotkey_filtered[i-1].msg ..
+                    '\n' ..
+                    hotkey_filtered[i].msg ..
+                    '\n'
             end
         end
-        if math.fmod(#hotkey_filtered,2) == 1 then hkstr = hkstr .. hotkey_filtered[#hotkey_filtered].msg end
-        local hkstr_styled = hs.styledtext.new(hkstr, {font={name="Courier-Bold",size=16}, color=dodgerblue, paragraphStyle={lineSpacing=12.0,lineBreak='truncateMiddle'}, shadow={offset={h=0,w=0},blurRadius=0.5,color=darkblue}})
+
+        if math.fmod(#hotkey_filtered,2) == 1 then
+            hkstr = hkstr .. hotkey_filtered[#hotkey_filtered].msg
+        end
+
+        local hkstr_styled = hs.styledtext.new(
+            hkstr,
+            {font={name="Courier-Bold",size=16},
+             color=dodgerblue,
+             paragraphStyle={lineSpacing=12.0,lineBreak='truncateMiddle'},
+             shadow={offset={h=0,w=0},
+                     blurRadius=0.5,color=darkblue}})
         hotkeytext:setStyledText(hkstr_styled)
         hotkeybg:show()
         hotkeytext:show()
@@ -200,13 +148,15 @@ function modal_stat(color,alpha)
         local mainScreen = hs.screen.mainScreen()
         local mainRes = mainScreen:fullFrame()
         local localMainRes = mainScreen:absoluteToLocal(mainRes)
-        modal_tray = hs.canvas.new(mainScreen:localToAbsolute({x=localMainRes.w-40,y=localMainRes.h-40,w=20,h=20}))
+        modal_tray = hs.canvas.new(
+            mainScreen:localToAbsolute({x=localMainRes.w-40,y=localMainRes.h-40,w=20,h=20}))
         modal_tray[1] = {action="fill",type="circle",fillColor=white}
         modal_tray[1].fillColor.alpha=0.7
         modal_tray[2] = {action="fill",type="circle",fillColor=white,radius="40%"}
         modal_tray:level(hs.canvas.windowLevels.status)
         modal_tray:clickActivating(false)
-        modal_tray:behavior(hs.canvas.windowBehaviors.canJoinAllSpaces + hs.canvas.windowBehaviors.stationary)
+        modal_tray:behavior(
+            hs.canvas.windowBehaviors.canJoinAllSpaces + hs.canvas.windowBehaviors.stationary)
         modal_tray._default.trackMouseDown = true
     end
     modal_tray:show()
@@ -218,13 +168,15 @@ activeModals = {}
 function exit_others(excepts)
     function isInExcepts(value,tbl)
         for i=1,#tbl do
-           if tbl[i] == value then
-               return true
-           end
+            if tbl[i] == value then
+                return true
+            end
         end
         return false
     end
-    if excepts == nil then excepts = {} end
+    if excepts == nil then
+        excepts = {}
+    end
     for i = 1, #activeModals do
         if not isInExcepts(activeModals[i].id, excepts) then
             activeModals[i].modal:exit()
@@ -394,80 +346,80 @@ end
 -- 1
 -- @return int
 local function getNextIndex(table, currentIndex)
-  nextIndex = currentIndex + 1
-  if nextIndex > #table then
-    nextIndex = 1
-  end
+    nextIndex = currentIndex + 1
+    if nextIndex > #table then
+        nextIndex = 1
+    end
 
-  return nextIndex
+    return nextIndex
 end
 
 local function getNextWindow(windows, window)
-  if type(windows) == "string" then
-    windows = hs.application.find(windows):allWindows()
-  end
+    if type(windows) == "string" then
+        windows = hs.application.find(windows):allWindows()
+    end
 
-  windows = hs.fnutils.filter(windows, hs.window.isStandard)
-  windows = hs.fnutils.filter(windows, hs.window.isVisible)
+    windows = hs.fnutils.filter(windows, hs.window.isStandard)
+    windows = hs.fnutils.filter(windows, hs.window.isVisible)
 
-  -- need to sort by ID, since the default order of the window
-  -- isn't usable when we change the mainWindow
-  -- since mainWindow is always the first of the windows
-  -- hence we would always get the window succeeding mainWindow
-  table.sort(windows, function(w1, w2)
-    return w1:id() > w2:id()
-  end)
+    -- need to sort by ID, since the default order of the window
+    -- isn't usable when we change the mainWindow
+    -- since mainWindow is always the first of the windows
+    -- hence we would always get the window succeeding mainWindow
+    table.sort(windows, function(w1, w2)
+                   return w1:id() > w2:id()
+    end)
 
-  lastIndex = hs.fnutils.indexOf(windows, window)
-  if not lastIndex then return window end
+    lastIndex = hs.fnutils.indexOf(windows, window)
+    if not lastIndex then return window end
 
-  return windows[getNextIndex(windows, lastIndex)]
+    return windows[getNextIndex(windows, lastIndex)]
 end
 
 -- Needed to enable cycling of application windows
 lastToggledApplication = ''
 
 function launchOrCycleFocus(applicationName)
-  return function()
-    local nextWindow = nil
-    local targetWindow = nil
-    local focusedWindow          = hs.window.focusedWindow()
-    local lastToggledApplication = focusedWindow and focusedWindow:application():name()
+    return function()
+        local nextWindow = nil
+        local targetWindow = nil
+        local focusedWindow          = hs.window.focusedWindow()
+        local lastToggledApplication = focusedWindow and focusedWindow:application():name()
 
-    if not focusedWindow then return nil end
-    if lastToggledApplication == applicationName then
-      nextWindow = getNextWindow(applicationName, focusedWindow)
-      -- Becoming main means
-      -- * gain focus (although docs say differently?)
-      -- * next call to launchOrFocus will focus the main window <- important
-      -- * when fetching allWindows() from an application mainWindow will be the first one
-      --
-      -- If we have two applications, each with multiple windows
-      -- i.e:
-      --
-      -- Google Chrome: {window1} {window2}
-      -- Firefox:       {window1} {window2} {window3}
-      --
-      -- and we want to move between Google Chrome {window2} and Firefox {window3}
-      -- when pressing the hotkeys for those applications, then using becomeMain
-      -- we cycle until those windows (i.e press hotkey twice for Chrome) have focus
-      -- and then the launchOrFocus will trigger that specific window.
-      nextWindow:becomeMain()
-      nextWindow:focus()
-    else
-      hs.application.launchOrFocus(applicationName)
-    end
+        if not focusedWindow then return nil end
+        if lastToggledApplication == applicationName then
+            nextWindow = getNextWindow(applicationName, focusedWindow)
+            -- Becoming main means
+            -- * gain focus (although docs say differently?)
+            -- * next call to launchOrFocus will focus the main window <- important
+            -- * when fetching allWindows() from an application mainWindow will be the first one
+            --
+            -- If we have two applications, each with multiple windows
+            -- i.e:
+            --
+            -- Google Chrome: {window1} {window2}
+            -- Firefox:       {window1} {window2} {window3}
+            --
+            -- and we want to move between Google Chrome {window2} and Firefox {window3}
+            -- when pressing the hotkeys for those applications, then using becomeMain
+            -- we cycle until those windows (i.e press hotkey twice for Chrome) have focus
+            -- and then the launchOrFocus will trigger that specific window.
+            nextWindow:becomeMain()
+            nextWindow:focus()
+        else
+            hs.application.launchOrFocus(applicationName)
+        end
 
-    if nextWindow then
-      targetWindow = nextWindow
-    else
-      targetWindow = hs.window.focusedWindow()
-    end
+        if nextWindow then
+            targetWindow = nextWindow
+        else
+            targetWindow = hs.window.focusedWindow()
+        end
 
-    if not targetWindow then
-      return nil
+        if not targetWindow then
+            return nil
+        end
     end
-  end
 end
 
 function activateApp(appname)
@@ -504,70 +456,58 @@ move_win_bindings = {
 
 applist = {
     {shortcut = 'c', appname = 'Google Chrome'},
-    {shortcut = 'e', appname = 'Microsoft Excel'},
+    {shortcut = 'e', appname = 'Emacs'},
     {shortcut = 'f', appname = 'Finder'},
-    {shortcut = 'i', appname = 'Amazon Chime'},
-    {shortcut = 'j', appname = 'IntelliJ IDEA'},
-    {shortcut = 'm', appname = 'NeteaseMusic'},
-    {shortcut = 'o', appname = 'Microsoft Outlook'},
-    {shortcut = 'p', appname = 'Microsoft PowerPoint'},
-    {shortcut = 'r', appname = 'Firefox'},
     {shortcut = 't', appname = 'iTerm2'},
-    {shortcut = 'w', appname = 'Microsoft Word'},
     {shortcut = 'x', appname = 'WeChat'},
+    {shortcut = 'v', appname = 'Visual Studio Code'}
 }
 
 hs.fnutils.each(resize_win_bindings, function(item)
-    hs.hotkey.bind(item.key[1], item.key[2], item.tip, function() resize_win(item.dir) end)
+                    hs.hotkey.bind(item.key[1], item.key[2], item.tip, function() resize_win(item.dir) end)
 end)
 
 hs.fnutils.each(move_win_bindings, function(item)
-    hs.hotkey.bind(item.key[1], item.key[2], item.tip, function() move_win(item.dir) end)
+                    hs.hotkey.bind(item.key[1], item.key[2], item.tip, function() move_win(item.dir) end)
 end)
 
 hs.fnutils.each(applist, function(item)
-    hs.hotkey.bind(appmod, item.shortcut, item.appname, function() activateApp(item.appname) end)
+                    hs.hotkey.bind(appmod, item.shortcut, item.appname, function() activateApp(item.appname) end)
 end)
 
 if not module_list then
     module_list = {
-        "widgets/caffeine",
-        "widgets/netspeed",
-        "widgets/calendar",
         "widgets/hcalendar",
         "widgets/analogclock",
-        "widgets/timelapsed",
-        "widgets/aria2",
         "modes/basicmode",
         "modes/indicator",
         "modes/clipshow",
         "modes/cheatsheet",
         "modes/hsearch",
-        "misc/bingdaily",
     }
 end
 
 hs.fnutils.each(module_list, function(module)
-    require(module)
+                    require(module)
 end)
 
 if #modal_list > 0 then require("modalmgr") end
 
 globalGC = hs.timer.doEvery(180, collectgarbage)
 globalScreenWatcher = hs.screen.watcher.newWithActiveScreen(function(activeChanged)
-    if activeChanged then
-        exit_others()
-        clipshowclear()
-        if modal_tray then modal_tray:delete() modal_tray = nil end
-        if hotkeytext then hotkeytext:delete() hotkeytext = nil end
-        if hotkeybg then hotkeybg:delete() hotkeybg = nil end
-        for i=1,#hs.screen.allScreens() do
-            local screen = hs.screen.allScreens()[i]
-            destroy_time(screen:id())
-            destroy_screen_number(screen:id())
+        if activeChanged then
+            exit_others()
+            clipshowclear()
+            if modal_tray then modal_tray:delete() modal_tray = nil end
+            if hotkeytext then hotkeytext:delete() hotkeytext = nil end
+            if hotkeybg then hotkeybg:delete() hotkeybg = nil end
+            for i=1,#hs.screen.allScreens() do
+                local screen = hs.screen.allScreens()[i]
+                destroy_time(screen:id())
+                destroy_screen_number(screen:id())
+            end
+            if cheatsheet_view then cheatsheet_view:delete() cheatsheet_view = nil end
         end
-        if cheatsheet_view then cheatsheet_view:delete() cheatsheet_view = nil end
-    end
 end):start()
 
 hs.alert.show("Config Loaded")

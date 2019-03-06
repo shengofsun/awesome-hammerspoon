@@ -24,7 +24,7 @@ function modalmgr:exited()
     end
 end
 
-modalmgr:bind("", "space", "Alfred 3", function() exit_others() activateApp("Alfred 3") end)
+-- modalmgr:bind("", "space", "Alfred 3", function() exit_others() activateApp("Alfred 3") end)
 modalmgr:bind("", "escape", "Exit Main Mode", function() modalmgr:exit() end)
 modalmgr:bind("", "Q", "Exit Main Mode", function() modalmgr:exit() end)
 
@@ -113,4 +113,3 @@ winhints_keys = winhints_keys or {"", "tab"}
 if string.len(winhints_keys[2]) > 0 then
     modalmgr:bind(winhints_keys[1], winhints_keys[2], 'Show Windows Hint', function() exit_others() hs.hints.windowHints() end)
 end
-

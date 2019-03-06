@@ -15,7 +15,13 @@ function drawToday(calendar)
     local columnofcurrentmonth = os.date("*t").wday
     local splitw = 205
     local splith = 141
-    local todaycoverrect = hs.geometry.rect(calendar.screen:localToAbsolute(calendar.caltopleft[1]+10+splitw/7*(columnofcurrentmonth-1),calendar.caltopleft[2]+10+splith/7*(rowofcurrentmonth+2),splitw/7,splith/7))
+    local todaycoverrect = hs.geometry.rect(
+        calendar.screen:localToAbsolute(
+            calendar.caltopleft[1]+10+splitw/7*(columnofcurrentmonth-1),
+            calendar.caltopleft[2]+10+splith/7*(rowofcurrentmonth+2),
+            splitw/7,
+            splith/7)
+    )
     if not calendar.todaycover then
         calendar.todaycover = hs.drawing.rectangle(todaycoverrect)
         calendar.todaycover:setStroke(false)
@@ -115,12 +121,12 @@ if not launch_calendar then launch_calendar=true end
 if launch_calendar == true then
     showCalendars()
     hs.screen.watcher.newWithActiveScreen(function(activeChanged)
-        if activeChanged then
-            destroyCalendars()
-            hs.timer.doAfter(3, function()
-                print('Refresh Calendar')
-                showCalendars()
-            end)
-        end
+            if activeChanged then
+                destroyCalendars()
+                hs.timer.doAfter(3, function()
+                                     print('Refresh Calendar')
+                                     showCalendars()
+                end)
+            end
     end):start()
 end

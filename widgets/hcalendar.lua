@@ -21,7 +21,7 @@ function showHCalendar(screen)
     hcalendar.mainRes = screen:fullFrame()
     hcalendar.localMainRes = screen:absoluteToLocal(hcalendar.mainRes)
     if not hcaltopleft then
-        hcalendar.topleft = {40, hcalendar.localMainRes.h-130-44}
+        hcalendar.topleft = {40, hcalendar.localMainRes.h-160-44}
     else
         hcalendar.topleft = hcaltopleft
     end

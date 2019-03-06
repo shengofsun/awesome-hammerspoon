@@ -5,19 +5,19 @@ bing_image_dir = os.getenv("HOME").."/Library/Caches/org.hammerspoon.Hammerspoon
 
 function bingDailyRequest()
     hs.http.asyncGet(json_req_url, {["User-Agent"]=user_agent_str}, function(stat,body,header)
-        if stat == 200 then
-            if pcall(function() hs.json.decode(body) end) then
-                local decode_data = hs.json.decode(body)
-                local pic_url = decode_data.images[1].url
-                local pic_name = hs.http.urlParts(pic_url).lastPathComponent
-                if bing_last_set_pic ~= pic_name then
-                    local full_url = "https://www.bing.com"..pic_url
-                    downloadBingImage(full_url)
-                end
-            end
-        else
-            print("Bing URL request failed!")
-        end
+                         if stat == 200 then
+                             if pcall(function() hs.json.decode(body) end) then
+                                 local decode_data = hs.json.decode(body)
+                                 local pic_url = decode_data.images[1].url
+                                 local pic_name = hs.http.urlParts(pic_url).lastPathComponent
+                                 if bing_last_set_pic ~= pic_name then
+                                     local full_url = "https://www.bing.com"..pic_url
+                                     downloadBingImage(full_url)
+                                 end
+                             end
+                         else
+                             print("Bing URL request failed!")
+                         end
     end)
 end
 
@@ -56,14 +56,18 @@ function setAsWallpaperByApplescript(filepath)
 end
 
 function setAsWallpaperByShellscript(filepath)
-    local query_script = 'sqlite3 "'..desktop_picture_db..'" "select value from data" 2>/dev/null | grep -v "'..hs.fs.displayName(filepath)..'" 2>/dev/null'
+    local query_script = 'sqlite3 "'..desktop_picture_db..
+        '" "select value from data" 2>/dev/null | grep -v "'..
+        hs.fs.displayName(filepath)..'" 2>/dev/null'
     local to_update, query_status = hs.execute(query_script)
     if not query_status or string.len(to_update) == 0 then
         print("No need to set desktop picture by shell script")
         return
     end
 
-    local shellscript = "sqlite3 \""..desktop_picture_db.."\" \"update data set value = '"..filepath.."'\" && killall Dock"
+    local shellscript = "sqlite3 \""..desktop_picture_db..
+        "\" \"update data set value = '"..
+        filepath.."'\" && killall Dock"
     local outout, status, type, rc = hs.execute(shellscript)
     if not status then
         print("ShellScript failed.")

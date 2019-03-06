@@ -181,14 +181,48 @@ function aria2_DrawCanvas()
                             aria2_canvas[1] = {type="rectangle",fillColor=osx_red}
                         end
                         aria2_canvas[1].fillColor.alpha = 0.1
-                        aria2_canvas[2] = {type="text",text=aria2_file_path,frame={x="2%",y="10%",w="60%",h="45%"},textAlignment="left",textLineBreak="truncateMiddle"}
-                        aria2_canvas[3] = {type="text",text=file_size,frame={x="64%",y="10%",w="15%",h="45%"},textAlignment="right"}
-                        aria2_canvas[4] = {type="text",text=aria2_download_speed,frame={x="83%",y="15%",w="15%",h="45%"},textSize=10,textAlignment="right"}
-                        aria2_canvas[5] = {action="fill",type="rectangle",fillColor=gray,frame={x="2%",y="55%",w="60%",h="25%"}}
-                        aria2_canvas[6] = {action="fill",type="rectangle",fillColor=dodgerblue,frame={x="2%",y="55%",w=tostring(0.6*aria2_download_progress),h="25%"}}
-                        aria2_canvas[7] = {type="text",text=progress_percent,frame={x="2%",y="55%",w="60%",h="45%"},textSize=10,textAlignment="right"}
-                        aria2_canvas[8] = {type="text",text=connection_number,frame={x="64%",y="55%",w="15%",h="45%"},textSize=10,textAlignment="center"}
-                        aria2_canvas[9] = {type="text",text=aria2_remain_time,frame={x="83%",y="55%",w="15%",h="45%"},textSize=10,textAlignment="right"}
+                        aria2_canvas[2] = {type="text",
+                            text=aria2_file_path,
+                            frame={x="2%",y="10%",w="60%",h="45%"},
+                            textAlignment="left",textLineBreak="truncateMiddle"
+                        }
+                        aria2_canvas[3] = {type="text",
+                            text=file_size,
+                            frame={x="64%",y="10%",w="15%",h="45%"},textAlignment="right"
+                        }
+                        aria2_canvas[4] = {type="text",
+                            text=aria2_download_speed,
+                            frame={x="83%",y="15%",w="15%",h="45%"},
+                            textSize=10,textAlignment="right"
+                        }
+                        aria2_canvas[5] = {action="fill",
+                            type="rectangle",
+                            fillColor=gray,
+                            frame={x="2%",y="55%",w="60%",h="25%"}
+                        }
+                        aria2_canvas[6] = {action="fill",
+                            type="rectangle",
+                            fillColor=dodgerblue,
+                            frame={x="2%",y="55%",w=tostring(0.6*aria2_download_progress),h="25%"}
+                        }
+                        aria2_canvas[7] = {type="text",
+                            text=progress_percent,
+                            frame={x="2%",y="55%",w="60%",h="45%"},
+                            textSize=10,
+                            textAlignment="right"
+                        }
+                        aria2_canvas[8] = {type="text",
+                            text=connection_number,
+                            frame={x="64%",y="55%",w="15%",h="45%"},
+                            textSize=10,
+                            textAlignment="center"
+                        }
+                        aria2_canvas[9] = {type="text",
+                            text=aria2_remain_time,
+                            frame={x="83%",y="55%",w="15%",h="45%"},
+                            textSize=10,
+                            textAlignment="right"
+                        }
                         aria2_canvas:mouseCallback(function(canvas,event,id,x,y)
                             if canvas == aria2_canvas and event == "mouseDown" then
                                 local modifiers_status = hs.eventtap.checkKeyboardModifiers()
@@ -221,7 +255,11 @@ function aria2_DrawCanvas()
                 aria2_init_in_screen = hs.screen.mainScreen()
                 local mainRes = aria2_init_in_screen:fullFrame()
                 local localMainRes = aria2_init_in_screen:absoluteToLocal(mainRes)
-                aria2_drawer = hs.canvas.new(aria2_init_in_screen:localToAbsolute({x=localMainRes.w-400,y=localMainRes.h-50*#aria2_canvas_holder-52,w=400,h=50*#aria2_canvas_holder}))
+                aria2_drawer = hs.canvas.new(
+                    aria2_init_in_screen:localToAbsolute({
+                        x=localMainRes.w-400,
+                        y=localMainRes.h-50*#aria2_canvas_holder-52,
+                        w=400,h=50*#aria2_canvas_holder}))
                 aria2_drawer[1] = {type="rectangle",fillColor=white}
                 aria2_drawer[1].fillColor.alpha = 0.8
                 aria2_drawer:level(hs.canvas.windowLevels.tornOffMenu)
@@ -233,11 +271,21 @@ function aria2_DrawCanvas()
                 end
                 local mainRes = aria2_init_in_screen:fullFrame()
                 local localMainRes = aria2_init_in_screen:absoluteToLocal(mainRes)
-                aria2_drawer:frame(aria2_init_in_screen:localToAbsolute({x=localMainRes.w-400,y=localMainRes.h-50*#aria2_canvas_holder-52,w=400,h=50*#aria2_canvas_holder}))
+                aria2_drawer:frame(
+                    aria2_init_in_screen:localToAbsolute(
+                        {x=localMainRes.w-400,
+                            y=localMainRes.h-50*#aria2_canvas_holder-52,
+                            w=400,h=50*#aria2_canvas_holder}))
             end
             aria2_drawer:show()
             for idx,val in pairs(aria2_canvas_holder) do
-                aria2_drawer[idx+1]={type="canvas",canvas=val.canvas,frame={x="0%",y=tostring(1/#aria2_canvas_holder*(idx-1)),w="100%",h=tostring(1/#aria2_canvas_holder)}}
+                aria2_drawer[idx+1]={type="canvas",
+                    canvas=val.canvas,
+                    frame={x="0%",
+                        y=tostring(1/#aria2_canvas_holder*(idx-1)),
+                        w="100%",
+                        h=tostring(1/#aria2_canvas_holder)}
+                }
             end
             -- TODO: Figure out why this is needed
             aria2_drawer:mouseCallback(function(canvas,event,id,x,y)
@@ -396,7 +444,9 @@ function aria2_IntervalRequest()
                     if decoded_data[i].result.downloadSpeed == "0" then
                         aria2_remain_time = "--:--:--"
                     else
-                        aria2_remain_time = formatTime(string.format("%.0f",(decoded_data[i].result.totalLength-decoded_data[i].result.completedLength)/decoded_data[i].result.downloadSpeed))
+                        aria2_remain_time = formatTime(
+                            string.format("%.0f",(decoded_data[i].result.totalLength-decoded_data[i].result.completedLength)/
+                                decoded_data[i].result.downloadSpeed))
                     end
                     aria2_canvas_holder[i-(aria2_activerep_tbl_pos-1)].canvas[4].text = download_speed
                     aria2_canvas_holder[i-(aria2_activerep_tbl_pos-1)].canvas[6].frame = {x="2%",y="55%",w=tostring(0.6*aria2_download_progress),h="25%"}
