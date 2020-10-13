@@ -1,8 +1,9 @@
 require "preload"
 
 hs.hotkey.alertDuration=0
-hs.hints.showTitleThresh = 0
-hs.window.animationDuration = 0
+hs.hints.showTitleThresh=20
+hs.hints.style=vimperator
+hs.window.animationDuration=0
 
 white = hs.drawing.color.white
 black = hs.drawing.color.black
@@ -455,12 +456,13 @@ move_win_bindings = {
 }
 
 applist = {
-    {shortcut = 'c', appname = 'Google Chrome'},
+    {shortcut = 'g', appname = 'Google Chrome'},
     {shortcut = 'e', appname = 'Emacs'},
     {shortcut = 'f', appname = 'Finder'},
     {shortcut = 't', appname = 'iTerm2'},
     {shortcut = 'x', appname = 'WeChat'},
-    {shortcut = 'v', appname = 'Visual Studio Code'}
+    {shortcut = 'v', appname = 'Visual Studio Code'},
+    {shortcut = 'c', appname = 'CLion'}
 }
 
 hs.fnutils.each(resize_win_bindings, function(item)
