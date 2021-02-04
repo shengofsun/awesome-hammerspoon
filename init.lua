@@ -479,8 +479,8 @@ end)
 
 if not module_list then
     module_list = {
-        "widgets/hcalendar",
-        "widgets/analogclock",
+        -- "widgets/hcalendar",
+        -- "widgets/analogclock",
         "modes/basicmode",
         "modes/indicator",
         "modes/clipshow",
